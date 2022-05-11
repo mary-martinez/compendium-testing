@@ -8,6 +8,7 @@ export default function PokemonList() {
   const [loading, setLoading] = useState(true);
   const [types, setTypes] = useState([]);
   const [filter, setFilter] = useState('All');
+
   useEffect(() => {
     try {
       const fetchData = async () => {
