@@ -1,38 +1,44 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { fetchPokemon } from '../services/fetchData';
+import { fetchPokemon, fetchTypes } from '../services/fetchData';
 import styles from './PokemonList.css';
 
 export default function PokemonList() {
   const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [types, setTypes] = useState([]);
+  const [filter, setFilter] = useState('All');
   useEffect(() => {
-    try{
-      const fetchData = async() => {
-        const data = await fetchPokemon();
-        console.log('data', data);
+    try {
+      const fetchData = async () => {
+        const data = await fetchPokemon(filter);
+        const dataTwo = await fetchTypes();
         setPokemon(data);
+        setTypes(dataTwo);
         setLoading(false);
-      }
+      };
       fetchData();
-    } catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }, [])
-  
-  // const handleSearch = async () => {
+  }, [filter]);
 
-  // }
-  
+  const handleFilter = async (e) => {
+    setFilter(e.target.value);
+  };
+
   return (
     <>
-    { loading && <p>Loading...</p>}
+      {loading && <p>Loading...</p>}
       <h2>Pokemon</h2>
-      {/* <label>
-        Search for a Pokemon
-      <input value={search} onChange={handleSearch}/>
-      </label> */}
+      <select onChange={(e) => handleFilter(e)}>
+        <option value={'All'}>All</option>
+        {types.map((type) => (
+          <option key={type.type} value={type.type}>
+            {type.type}
+          </option>
+        ))}
+      </select>
       <div className={styles.pokemonList}>
         {pokemon.map((poke) => (
           <div key={poke.id} className={styles.pokeCard}>
@@ -42,5 +48,5 @@ export default function PokemonList() {
         ))}
       </div>
     </>
-  )
+  );
 }
